@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banking application</title>
+
+    <style>
+        body{
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        
+        h3{
+            text-align: center;
+        }
+        
+        
+        #login{
+            margin: 80px auto;
+            background-color: rgb(179, 216, 216);
+            
+            max-width: 50%;
+            
+            text-align: center;
+        }
+
+        input{
+            width: 230px;
+            height: 30px;
+        }
+
+        button{
+            width: 230px;
+            background-color: rgb(113, 113, 194);
+            border: 2px groove rgb(106, 106, 125);
+            color: rgb(240, 244, 244);
+        }
+
+        #output{
+            width: 230px;
+            height: 60px;
+            border: 2px solid red;
+            justify-self: center;
+        }
+       
+    </style>
+</head>
+<body>
+    <form id="login" >
+        <h1>Banking System</h1>
+    
+        <h3>Account Holder Name:</h3>
+    <input type="text" placeholder="name" id="accountHolder">
+
+    <h3>Initial Balance:</h3>
+    <input type="text" placeholder="balance" id="initialBalance"><br>
+    
+    <button type="button" onclick="createAccount()">Create Account</button>
+    
+    <h3>Account Number:</h3>
+    <input type="text" placeholder="Account Number" id="accountNumber"><br>
+    
+    <h3>Amount:</h3>
+    <input type="text" placeholder="Amount" id="amount"><br>
+    
+    <button type="button" onclick="withdraw()">Withdraw</button><br>
+
+    <button type="button" onclick="deposit()">Deposit</button><br>
+
+    <button type="button" onclick="checkBalance()">Check Balance</button>
+
+    <div id="output"></div>
+
+    </form>
+    <script>
+class BankAccount {
+    constructor(AccountNumber, AccountHolder, balance = 0){
+        this.AccountHolder = AccountHolder;
+        this.AccountNumber = AccountNumber;
+        this.balance = balance;
+    }
+
+    deposit(amount){
+        this.balance += amount;
+        return `$${amount} deposited into ${this.AccountHolder}s current balance: $${this.balance}`;
+    }
+
+    withdraw(amount){
+        if (amount > this.balance){
+            return 'insufficient funds'
+        } else {
+            this.balance -= amount;
+            return `$${amount} withdrawn from ${this.AccountHolder}s current balance: $${this.balance}`;
+        }
+    }
+
+    checkBalance(){
+        return `current balance in ${this.AccountHolder}s account is: $${this.balance}`;
+    }
+}
+
+const accounts = new Map();
+
+function createAccount(){
+    const accountHolder = document.getElementById('accountHolder').value;
+    const initialbalance = parseFloat(document.getElementById('initialBalance').value); //the parseFloat() will change the value taken to a float
+    const accountNumber = Math.floor(Math.random() * 1000000);//the random() method of the Math object will generate the codes we need the floor() will change it inot an integer
+    const newAccount = new BankAccount(accountNumber, accountHolder, initialbalance);
+    accounts.set(accountNumber,newAccount);
+    document.getElementById('output').innerText = `Account created. Account Number: ${accountNumber}`;
+}
+
+function deposit(){
+    const accountNumber = parseInt(document.getElementById('accountNumber').value);
+    const amount = parseFloat(document.getElementById('amount').value);
+    const account = accounts.get(accountNumber);
+    if(account){
+        document.getElementById('output').innerText = account.deposit(amount);
+    }else{
+        document.getElementById('output').innerText = 'Account not found';
+    }
+}
+
+function withdraw(){
+    const accountNumber = parseInt(document.getElementById('accountNumber').value);
+    const amount = parseFloat(document.getElementById('amount').value);
+    const account = accounts.get(accountNumber);
+    if(account){
+        document.getElementById('output').innerText = account.withdraw(amount);
+    }else{
+        document.getElementById('output').innerText = 'Account not found';
+    }
+}
+
+function checkBalance(){
+    const accountNumber = parseInt(document.getElementById('accountNumber').value);
+    const account = accounts.get(accountNumber);
+    if (account){
+        document.getElementById('output').innerText = account.checkBalance();
+    } else{
+        document.getElementById('output').innerText = 'Account not found'
+    }
+}
+
+    </script>
+</body>
+</html>
